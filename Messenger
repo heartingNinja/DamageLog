@@ -1,0 +1,35 @@
+using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
+
+public class Messenger : MonoBehaviour
+{
+    private static Messenger instance;
+
+    
+    public static Messenger Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                instance = FindObjectOfType<Messenger>();
+            }
+            return instance;
+        }
+    }
+    
+    public void CreateMessage(GameObject messagePrefab, RectTransform messageParent, string myMessage, Color messageColor)
+    {
+        GameObject cm = Instantiate(messagePrefab, messagePrefab.transform.position, Quaternion.identity);
+
+        cm.transform.SetParent(messageParent);
+
+        cm.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+
+        cm.transform.GetChild(0).GetComponent<Text>().text = myMessage;
+
+        cm.transform.GetChild(0).GetComponent<Text>().color = messageColor;
+    }
+
+}
