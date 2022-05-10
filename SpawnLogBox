@@ -1,0 +1,104 @@
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+    public class SpawnLogBox : MonoBehaviour
+    {
+        public Queue<string> messageQueue;
+
+        public GameObject chatMessagePrefab;
+
+        public RectTransform chatMessageParent;
+
+      
+       
+
+     float dmgHead;
+     float dmgBody;
+     float dmgArm;
+
+    Text head;
+    Text body;
+    Text arm;
+
+
+    private void Start()
+        {
+            messageQueue = new Queue<string>();
+
+            messageQueue.Enqueue("500 Head");
+        }
+
+        private void Update()
+        {
+            CheckNewMessages();
+            DamageNumbersLog();
+
+
+        }
+
+        void CheckNewMessages()
+        {
+            if (messageQueue.Count > 0)
+            {
+                foreach (string line in messageQueue)
+                {
+                    Messenger.Instance.CreateMessage(chatMessagePrefab, chatMessageParent, line, Color.red);
+                }
+
+                messageQueue.Dequeue();
+            }
+        }
+
+        public void CreateMessage()
+        {
+            messageQueue.Enqueue("Damage");
+        }
+
+    void DamageNumbersLog()
+    {
+        GameObject[] headDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
+
+        foreach(GameObject enemy in headDamage)
+        {
+            dmgHead = enemy.GetComponentInChildren<DamageInfo>().totalDamage;
+        }
+
+        GameObject[] bodyDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
+
+        foreach (GameObject enemy in bodyDamage)
+        {
+            dmgBody = enemy.GetComponentInChildren<DamageInfoBody>().totalDamage;
+        }
+
+        GameObject[] armDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
+
+        foreach (GameObject enemy in armDamage)
+        {
+            dmgArm = enemy.GetComponentInChildren<DamageInfoArms>().totalDamage;
+        }
+
+        head.text = dmgHead.ToString();
+        body.text = dmgBody.ToString();
+        arm.text = dmgArm.ToString();
+
+        if (dmgHead > 1)
+        {
+            messageQueue.Enqueue(head.text);
+        }
+       
+        if(dmgBody >1)
+        {
+            messageQueue.Enqueue(body.text);
+        }
+
+        if(dmgArm > 1)
+        {
+            messageQueue.Enqueue(arm.text);
+        }
+        
+       
+
+    }
+
+   }
