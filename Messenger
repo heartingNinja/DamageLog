@@ -19,7 +19,7 @@ public class Messenger : MonoBehaviour
         }
     }
     
-    public void CreateMessage(GameObject messagePrefab, RectTransform messageParent, string myMessage, Color messageColor)
+    public void CreateMessage(bool willDestroy, float destroyTime, GameObject messagePrefab, RectTransform messageParent, string myMessage, Color messageColor)
     {
         GameObject cm = Instantiate(messagePrefab, messagePrefab.transform.position, Quaternion.identity);
 
@@ -30,6 +30,13 @@ public class Messenger : MonoBehaviour
         cm.transform.GetChild(0).GetComponent<Text>().text = myMessage;
 
         cm.transform.GetChild(0).GetComponent<Text>().color = messageColor;
+
+        if(willDestroy)
+        {
+            Destroy(cm, destroyTime);
+        }
+
+        
     }
 
 }
