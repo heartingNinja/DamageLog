@@ -7,32 +7,33 @@ using UnityEngine.UI;
         public Queue<string> messageQueue;
 
         public GameObject chatMessagePrefab;
-
         public RectTransform chatMessageParent;
 
+        public GameObject playerInteractionPrefab;
+        public RectTransform playerInteractionParent;
+
+        public bool DoDestroyChat = false;
+        public float destroyChatTime = 0f;
       
        
+       public GameObject enemyOne; // for DamageLogOneEnemy
+       
 
-     float dmgHead;
-     float dmgBody;
-     float dmgArm;
-
-    Text head;
-    Text body;
-    Text arm;
-
-
+        float dmgHead;
+        float dmgBody;
+        float dmgArm;
+      
+    
     private void Start()
         {
-            messageQueue = new Queue<string>();
-
-            messageQueue.Enqueue("500 Head");
+            messageQueue = new Queue<string>();          
         }
 
         private void Update()
         {
             CheckNewMessages();
             DamageNumbersLog();
+            //DamageLogOneEnemy();
 
 
         }
@@ -43,7 +44,8 @@ using UnityEngine.UI;
             {
                 foreach (string line in messageQueue)
                 {
-                    Messenger.Instance.CreateMessage(chatMessagePrefab, chatMessageParent, line, Color.red);
+                    Messenger.Instance.CreateMessage(DoDestroyChat, destroyChatTime,  chatMessagePrefab, chatMessageParent, line, Color.red);
+                    Messenger.Instance.CreateMessage(DoDestroyChat, destroyChatTime, playerInteractionPrefab, playerInteractionParent, line, Color.black);
                 }
 
                 messageQueue.Dequeue();
@@ -57,48 +59,79 @@ using UnityEngine.UI;
 
     void DamageNumbersLog()
     {
-        GameObject[] headDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
+    // fail for multi enemy
+    //   GameObject[] enemyAll = GameObject.FindGameObjectsWithTag("EnemyForLog");
 
-        foreach(GameObject enemy in headDamage)
-        {
-            dmgHead = enemy.GetComponentInChildren<DamageInfo>().totalDamage;
-        }
+    //   foreach (GameObject enemy in enemyAll)
+    //   {
+    //       dmgHead = enemy.GetComponentInChildren<DamageInfo>().totalDamage;
+    //        dmgBody = enemy.GetComponentInChildren<DamageInfoBody>().totalDamage;
+    //        dmgArm = enemy.GetComponentInChildren<DamageInfoArms>().totalDamage;
+    //    }
+    // end fail multi enemy
 
-        GameObject[] bodyDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
+        
+     // works for 1 enemy
+         GameObject enemyAll = GameObject.FindGameObjectWithTag("EnemyForLog");      
+         dmgHead = enemyAll.GetComponentInChildren<DamageInfo>().totalDamage;
+         dmgBody = enemyAll.GetComponentInChildren<DamageInfoBody>().totalDamage;
+         dmgArm = enemyAll.GetComponentInChildren<DamageInfoArms>().totalDamage;
+     // end works for 1 enemy
 
-        foreach (GameObject enemy in bodyDamage)
-        {
-            dmgBody = enemy.GetComponentInChildren<DamageInfoBody>().totalDamage;
-        }
+        dmgHead = Mathf.Round(dmgHead);
+        dmgBody = Mathf.Round(dmgBody);
+        dmgArm = Mathf.Round(dmgArm);
 
-        GameObject[] armDamage = GameObject.FindGameObjectsWithTag("EnemyForLog");
-
-        foreach (GameObject enemy in armDamage)
-        {
-            dmgArm = enemy.GetComponentInChildren<DamageInfoArms>().totalDamage;
-        }
-
-        head.text = dmgHead.ToString();
-        body.text = dmgBody.ToString();
-        arm.text = dmgArm.ToString();
 
         if (dmgHead > 1)
         {
-            messageQueue.Enqueue(head.text);
-        }
-       
-        if(dmgBody >1)
-        {
-            messageQueue.Enqueue(body.text);
+            messageQueue.Enqueue(dmgHead.ToString() + " Head");
         }
 
-        if(dmgArm > 1)
+        if (dmgBody > 1)
         {
-            messageQueue.Enqueue(arm.text);
+            messageQueue.Enqueue(dmgBody.ToString() + " Body");
         }
-        
-       
+
+        if (dmgArm > 1)
+        {
+            messageQueue.Enqueue(dmgArm.ToString() + " Arm");
+        }
 
     }
+        
+        void DamageLogOneEnemy() // 1 enemy by public GameObject
+        {
+        dmgHead = enemyOne.GetComponentInChildren<DamageInfo>().totalDamage;
+        dmgBody = enemyOne.GetComponentInChildren<DamageInfoBody>().totalDamage;
+        dmgArm = enemyOne.GetComponentInChildren<DamageInfoArms>().totalDamage;
+
+        dmgHead = Mathf.Round(dmgHead);
+        dmgBody = Mathf.Round(dmgBody);
+        dmgArm = Mathf.Round(dmgArm);
+
+        
+        if (dmgHead > 1)
+        {
+            messageQueue.Enqueue(dmgHead.ToString() + " Head");
+        }
+
+        if (dmgBody > 1)
+        {
+            messageQueue.Enqueue(dmgBody.ToString() + " Body");
+        }
+
+        if (dmgArm > 1)
+        {
+            messageQueue.Enqueue(dmgArm.ToString() + "Arm");
+        }
+
+    }
+       
+
+    
 
    }
+
+
+
